@@ -6,103 +6,126 @@ A high-level, **code-free** view of how the AI-assisted pentesting system is str
 
 ## Design Goal
 
-Build a security reasoning platform where **security domains are replaceable capabilities** on top of a reusable **intelligence core**. The system is not limited to vulnerability research — its architecture is general enough to host any security domain as a module.
+Build a **stable AI security subject** whose concrete capabilities are **modular and pluggable**.
+
+- The **subject** (reasoning, context, memory, planning, execution, decision) is stable.
+- Concrete abilities come from **Skill / Plugin / Module**.
+- New tools and new AI capabilities slot in as **equipment** — no need to rebuild the system.
+
+This is **not** a workflow engine, and **not** a monolithic tool with everything baked in.
 
 ---
 
 ## Layered Architecture
 
 ```
-┌─────────────────────────────────────────────────────┐
-│                   HUMAN-IN-THE-LOOP                 │
-│        (approval checkpoint for every action)       │
-└──────────────────────────┬──────────────────────────┘
-                           │
-┌──────────────────────────▼──────────────────────────┐
-│  1. AGENT LAYER                                     │
-│     Task understanding · Workflow coordination      │
-│     Decision execution                              │
-└──────────────────────────┬──────────────────────────┘
-                           │
-┌──────────────────────────▼──────────────────────────┐
-│  2. PLANNER LAYER                                   │
-│     Action planning · Strategy generation           │
-│     Task decomposition                              │
-└──────────────────────────┬──────────────────────────┘
-                           │
-┌──────────────────────────▼──────────────────────────┐
-│  3. EXECUTOR LAYER                                  │
-│     Tool execution · Result collection              │
-│     Operation control                               │
-└──────────────────────────┬──────────────────────────┘
-                           │
-┌──────────────────────────▼──────────────────────────┐
-│  4. INTELLIGENCE LAYER                              │
-│     Observation analysis · Security reasoning       │
-│     Knowledge integration                           │
-└──────────────────────────┬──────────────────────────┘
-                           │
-┌──────────────────────────▼──────────────────────────┐
-│  5. MEMORY LAYER                                    │
-│     Experience storage · Reasoning history          │
-│     Long-term context                               │
-└──────────────────────────┬──────────────────────────┘
-                           │
-┌──────────────────────────▼──────────────────────────┐
-│  6. REPORT LAYER                                    │
-│     Result organization · Security findings         │
-│     Structured output                               │
-└─────────────────────────────────────────────────────┘
+                    AI-Pentest-System
+                          │
+            ┌─────────────┴─────────────┐
+            │     CORE (the subject)     │
+            │   系统主体 · 稳定不变       │
+            │                            │
+            │  ┌────────────┐ ┌────────┐ │
+            │  │AI Reasoning│ │Context │ │
+            │  │ 思考推理    │ │ 上下文  │ │
+            │  └────────────┘ └────────┘ │
+            │  ┌────────────┐ ┌────────┐ │
+            │  │  Memory    │ │Planning│ │
+            │  │ 经验记忆    │ │  规划   │ │
+            │  └────────────┘ └────────┘ │
+            │  ┌────────────┐ ┌────────┐ │
+            │  │ Execution  │ │Decision│ │
+            │  │   执行     │ │  决策   │ │
+            │  └────────────┘ └────────┘ │
+            └─────────────┬─────────────┘
+                          │
+            ┌─────────────▼─────────────┐
+            │   SECURITY INTELLIGENCE    │
+            │       安全智能层            │
+            │                            │
+            │  • Asset understanding     │
+            │    资产理解                │
+            │  • Technical analysis      │
+            │    技术分析                │
+            │  • Risk assessment         │
+            │    风险判断                │
+            │  • Attack path analysis    │
+            │    攻击路径分析            │
+            └─────────────┬─────────────┘
+                          │
+            ┌─────────────▼─────────────┐
+            │    CAPABILITY LAYER        │
+            │        能力层              │
+            │                            │
+            │   Skill    Plugin   Module │
+            └─────────────┬─────────────┘
+                          │
+            ┌─────────────▼─────────────┐
+            │      TOOL / EXTERNAL       │
+            └─────────────┬─────────────┘
+                          │
+            ┌─────────────▼─────────────┐
+            │     EXTERNAL WORLD         │
+            │       外部世界             │
+            └────────────────────────────┘
 ```
 
 ---
 
-## How a Task Flows
+## Core — The Stable Subject
 
-1. **Agent** receives the human objective and context
-2. **Planner** breaks it into a sequence of actions
-3. **Executor** runs each action through available tooling
-4. **Intelligence** interprets observations and decides the next step
-5. **Memory** stores what worked (and what didn't) for future runs
-6. **Report** packages findings for the human
+The Core is the **AI security subject**. It does not change when new tools appear. It owns:
 
-Each cycle can loop back to the Planner — the system **reasons dynamically**, it doesn't follow a fixed script.
+| Component | Role |
+|-----------|------|
+| **AI Reasoning** | 思考推理 — thinks through each step |
+| **Context** | 上下文 — holds current task state |
+| **Memory** | 经验记忆 — stores what worked before |
+| **Planning** | 规划 — breaks objectives into actions |
+| **Execution** | 执行 — drives capabilities |
+| **Decision** | 决策 — chooses the next move |
 
----
-
-## Intelligence Core vs. Domain Modules
-
-```
-            SECURITY INTELLIGENCE CORE
-                       │
-        ┌──────────────┼──────────────┐
-        │              │              │
-   Domain Module  Domain Module  Domain Module
-  (Pentesting)    (Recon)        (Forensics)
-        │              │              │
-        └──────────────┼──────────────┘
-                       │
-              SECURITY CAPABILITIES
-```
-
-The core provides reasoning, memory, and orchestration. Domain modules plug in on top — so adding a new security capability doesn't require rewriting the engine.
+> The subject **understands, analyzes, and decides**. It does not bake in any specific security capability.
 
 ---
 
-## Evolution Infrastructure
+## Security Intelligence Layer
 
-The system is designed to **evolve over time** with:
+Sits between the subject and capabilities. Translates generic reasoning into **security-specific judgement**:
 
-- **Version awareness** — knows its own state across iterations
-- **State awareness** — can recover from interruptions
-- **Recovery capability** — resumes mid-task without losing context
-- **Evolution tracking** — logs how its reasoning improves
+- **Asset understanding** — what is the target, what does it expose?
+- **Technical analysis** — what technology is in play, what are its weaknesses?
+- **Risk assessment** — how severe is each finding?
+- **Attack path analysis** — what sequence of actions could reach the goal?
 
 ---
 
-## Key Design Decisions
+## Capability Layer — Pluggable Equipment
 
-- **Human approval gates every high-impact action** — autonomy serves the human, never the reverse
-- **Observations are structured, not free-form** — the Intelligence layer consumes clean, typed data
-- **Memory is experience-based** — the system learns from what actually succeeded, not from static rules
-- **Tooling is abstracted** — the Executor speaks a common interface; tools can be swapped
+This is where **concrete abilities** live. Three plugin types:
+
+| Type | Purpose |
+|------|---------|
+| **Skill** | A reusable, self-contained know-how unit (e.g. "how to run sqlmap") |
+| **Plugin** | An integration with an external tool or service |
+| **Module** | A larger capability block (a full security domain) |
+
+When a new tool or a new AI capability emerges, it is added here — as **equipment** — without touching the Core.
+
+---
+
+## Tool / External → External World
+
+Capabilities talk to the outside world through tools — scanners, frameworks, APIs, databases. The Core never reaches out directly; it always goes through a capability.
+
+---
+
+## Why This Structure
+
+| If it were... | The problem |
+|---------------|-------------|
+| A **workflow engine** | Every new task needs a new flow; the system can't reason |
+| A **monolithic tool** | New capability = rewrite the whole thing |
+| **This design** | The subject stays stable; capabilities are equipment you swap in |
+
+The subject provides **intelligence**. The plugins provide **capability**.
