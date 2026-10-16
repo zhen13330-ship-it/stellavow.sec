@@ -1,0 +1,20 @@
+# No source code or operational artifacts are committed to this repo.
+# This repository contains architecture and philosophy documentation only.
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Python (kept clean — no code is committed here)
+__pycache__/
+*.pyc
+*.egg-info/
+.venv/
+
+# Local
+*.local
